@@ -4,6 +4,26 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
+    def open_convert(self):
+        self.window = convert.QtWidgets.QDialog()
+        convert.Ui_Dialog().setupUi(self.window)
+        self.window.show()
+
+    def open_mergesplit(self):
+        self.window = mergesplit.QtWidgets.QDialog()
+        mergesplit.Ui_Dialog().setupUi(self.window)
+        self.window.show()
+
+    def open_OCR(self):
+        self.window = camfile.QtWidgets.QDialog()
+        camfile.Ui_Dialog().setupUi(self.window)
+        self.window.show()
+
+    def open_docscan(self):
+        self.window = camfile.QtWidgets.QDialog()
+        camfile.Ui_Dialog().setupUi(self.window)
+        self.window.show()        
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(986, 822)
@@ -374,6 +394,7 @@ class Ui_MainWindow(object):
         self.ocrButton.setArrowType(QtCore.Qt.NoArrow)
         self.ocrButton.setObjectName("ocrButton")
         self.gridLayout.addWidget(self.ocrButton, 0, 1, 1, 1)
+        self.ocrButton.clicked.connect(self.open_OCR)
         self.scanButton = QtWidgets.QToolButton(self.frame_3)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -391,6 +412,7 @@ class Ui_MainWindow(object):
 "}")
         self.scanButton.setObjectName("scanButton")
         self.gridLayout.addWidget(self.scanButton, 1, 1, 1, 1)
+        self.scanButton.clicked.connect(self.open_docscan)
         self.convButton = QtWidgets.QToolButton(self.frame_3)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -408,6 +430,7 @@ class Ui_MainWindow(object):
 "}")
         self.convButton.setObjectName("convButton")
         self.gridLayout.addWidget(self.convButton, 0, 2, 1, 1)
+        self.convButton.clicked.connect(self.open_convert)
         self.mergesplitButton = QtWidgets.QToolButton(self.frame_3)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -424,6 +447,7 @@ class Ui_MainWindow(object):
 "    background-color: rgb(170, 255, 127);\n"
 "}")
         self.mergesplitButton.setObjectName("mergesplitButton")
+        self.mergesplitButton.clicked.connect(self.open_mergesplit)
         self.gridLayout.addWidget(self.mergesplitButton, 1, 2, 1, 1)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem2, 0, 0, 1, 1)
