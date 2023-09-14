@@ -1,0 +1,41 @@
+<RCC>
+  <qresource prefix="CamIcon">
+    <file>icons8-camera-64.png</file>
+    <file>icons8-camera-640.png</file>
+  </qresource>
+  <qresource prefix="Save">
+    <file>icons8-cross-64.png</file>
+    <file>icons8-save-50.png</file>
+  </qresource>
+  <qresource prefix="Setting">
+    <file>icons8-adjust-50.png</file>
+    <file>icons8-crop-24.png</file>
+  </qresource>
+  <qresource prefix="RetryAdd">
+    <file>icons8-add-50.png</file>
+    <file>icons8-retry-50.png</file>
+  </qresource>
+  <qresource prefix="Arrow">
+    <file>icons8-arrow-48 - down.png</file>
+    <file>icons8-arrow-48 - up.png</file>
+    <file>icons8-arrow-48-bright.png</file>
+    <file>icons8-arrow-48.png</file>
+    <file>icons8-arrow-48 - Copy.png</file>
+  </qresource>
+  <qresource prefix="OCR">
+    <file>icons8-text.gif</file>
+    <file>icons8-text-40.png</file>
+  </qresource>
+  <qresource prefix="Scan">
+    <file>icons8-portrait-mode-scanning.gif</file>
+    <file>icons8-portrait-mode-scanning-48.png</file>
+  </qresource>
+  <qresource prefix="Convert">
+    <file>icons8-convert.gif</file>
+    <file>icons8-convert-50.png</file>
+  </qresource>
+  <qresource prefix="MergeSplit">
+    <file>icons8-split-vertical.gif</file>
+    <file>icons8-split-vertical-50.png</file>
+  </qresource>
+</RCC>

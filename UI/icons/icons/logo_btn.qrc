@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="Logo">
+    <file>SCANOCR_logo_white.png</file>
+  </qresource>
+</RCC>
