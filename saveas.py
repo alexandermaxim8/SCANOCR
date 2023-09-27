@@ -1,16 +1,23 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtWidgets import QFileDialog, QWidget
 
 class Ui_Dialog(object):
     def saveButton_clicked(self):
         if self.res:
             index = self.extComboBox.currentIndex()
             if index == 0:
-                pass
+                pdf = self.res[0]
+                pdf_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save file", self.res[0], "PDF (*.pdf)")
+                if pdf_name:
+                    pdf.save(pdf_name[0], "PDF")
             elif index == 1:
-                pass
+                image = self.res[0]
+                img_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save file", self.res[0], "jpeg (*.jpeg)")
+                image.save(img_name[0], "JPEG")
             elif index == 2:
-                pass
+                image = self.res[0]
+                img_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save file", self.res[0], "png (*.png)")
+                image.save(img_name[0], "PNG")
             
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
