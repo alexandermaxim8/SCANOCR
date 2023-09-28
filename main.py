@@ -2,10 +2,13 @@ import os
 import camera_btn_rc, logo_btn_rc, camfile, convert, imageadj, saveas, mergesplit
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtCore import pyqtSlot
+
+import numpy as np
 from pdf2image import convert_from_path
 from PIL import Image
-from opencv_cam_class_1 import Scanner
+import cv2
 
 poppler_path=r"poppler-23.08.0\Library\bin"
 
@@ -56,54 +59,164 @@ def styleButton(prevnext):
             
     return sStyle
 
+
 class Ui_MainWindow(object):
+    def cam_captured(self):
+        self.cam_pressed = 1
+
+    @pyqtSlot()
+    def onClicked(self, index):
+        self.cap = cv2.VideoCapture(0)
+        while (self.cap.isOpened()):
+            ret, frame = self.cap.read()
+            if ret == True:
+                self.displayImage(frame,index, 1)
+                cv2.waitKey()
+            else:
+                print('return not found')
+                self.cap.release()
+                cv2.destroyAllWindows()
+
+    def displayImage(self, image, index, window=1):
+        print(index)
+        image = cv2.resize(image, (720, 480))
+        qformat = QImage.Format_Indexed8
+        if len(image.shape) == 3:
+            if image.shape[2] == 4:
+                qformat = QImage.Format_RGBA8888
+            else:
+                qformat = QImage.Format_RGB888
+        outImage = QImage(image, image.shape[1], image.shape[0], image.strides[0], qformat)
+        outImage = outImage.rgbSwapped()
+        outImage = outImage.mirrored(True, False)
+        self.cameraLabel.setPixmap(QPixmap.fromImage(outImage))
+        self.cameraLabel.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        self.img_name = False
+        if self.cam_pressed == 1:
+            pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+            flipped_pil_image=pil_image.transpose(Image.FLIP_LEFT_RIGHT)
+            image = cv2.cvtColor(np.array(flipped_pil_image), cv2.COLOR_RGB2BGR)
+            self.img_name = f"temp/temp_{index}.png"
+            cv2.imwrite(self.img_name, image)
+            self.cam_pressed = 0
+            print("berhasil_capture")
+            self.stackedWidget.setCurrentIndex(3)
+            self.cap.release()
+            cv2.destroyAllWindows()
+        elif self.stackedWidget.currentIndex()!=2:
+            self.cap.release()
+            cv2.destroyAllWindows()
+            return None     
+
+    def addButton_clicked(self):
+        index = self.current_page_index + 1
+        self.stackedWidget.setCurrentIndex(2)
+        self.onClicked(index)
+        if self.img_name:
+            self.temp_png.append(self.img_name)
+            self.current_page_index = index
+            self.show_page(index)
+
+    def retakeButton_clicked(self):
+        index = self.current_page_index
+        self.stackedWidget.setCurrentIndex(2)
+        self.onClicked(index)
+        if self.img_name:
+            self.temp_png[index] = self.img_name
+            self.show_page(index)
+
     def show_next_page(self):
-        if self.current_page_index < len(self.temp_png) - 2:
-            self.nextButton.setStyleSheet(styleButton(0))
-            self.previousButton.setStyleSheet(styleButton(0))
-            self.current_page_index += 1
-        elif self.current_page_index == len(self.temp_png) - 2:
-            self.nextButton.setStyleSheet(styleButton(1))
-            self.current_page_index += 1
-        self.show_page(self.current_page_index)
-        print(self.current_page_index)
+        if(self.stackedWidget.currentIndex()==1):
+            if self.current_page_index < len(self.temp_png) - 2:
+                self.nextButton.setStyleSheet(styleButton(0))
+                self.previousButton.setStyleSheet(styleButton(0))
+                self.current_page_index += 1
+            elif self.current_page_index == len(self.temp_png) - 2:
+                self.nextButton.setStyleSheet(styleButton(1))
+                self.current_page_index += 1
+            self.show_page(self.current_page_index)
+            print(self.current_page_index)
+        elif(self.stackedWidget.currentIndex()==3):
+            if self.current_page_index < len(self.temp_png) - 2:
+                self.nextButton2.setStyleSheet(styleButton(0))
+                self.prevButton2.setStyleSheet(styleButton(0))
+                self.current_page_index += 1
+            elif self.current_page_index == len(self.temp_png) - 2:
+                self.nextButton2.setStyleSheet(styleButton(1))
+                self.current_page_index += 1
+            self.show_page(self.current_page_index)
+            print(self.current_page_index)
+
 
     def show_previous_page(self):
-        if self.current_page_index == 1:
-            self.previousButton.setStyleSheet(styleButton(2))
-            self.current_page_index -= 1
-        elif self.current_page_index > 1:
-            self.nextButton.setStyleSheet(styleButton(0))
-            self.previousButton.setStyleSheet(styleButton(0))
-            self.current_page_index -= 1
-        elif self.current_page_index == 0:
-            self.home_clicked()
-        self.show_page(self.current_page_index)
-        print(self.current_page_index)
+        if(self.stackedWidget.currentIndex()==1):
+            if self.current_page_index == 1:
+                self.previousButton.setStyleSheet(styleButton(2))
+                self.nextButton.setStyleSheet(styleButton(0))
+                self.current_page_index -= 1
+            elif self.current_page_index > 1:
+                self.nextButton.setStyleSheet(styleButton(0))
+                self.previousButton.setStyleSheet(styleButton(0))
+                self.current_page_index -= 1
+            elif self.current_page_index == 0:
+                self.home_clicked()
+            self.show_page(self.current_page_index)
+            print(self.current_page_index)
+        elif(self.stackedWidget.currentIndex()==3):
+            if self.current_page_index == 1:
+                self.prevButton2.setStyleSheet(styleButton(2))
+                self.nextButton2.setStyleSheet(styleButton(0))
+                self.current_page_index -= 1
+            elif self.current_page_index > 1:
+                self.nextButton2.setStyleSheet(styleButton(0))
+                self.prevButton2.setStyleSheet(styleButton(0))
+                self.current_page_index -= 1
+            elif self.current_page_index == 0:
+                self.home_clicked()
+            self.show_page(self.current_page_index)
 
     def show_page(self, index):
-        if 0 <= index < len(self.temp_png):
-            image = QPixmap(self.temp_png[index])
-            self.previewLabel.setPixmap(image)
-            self.previewLabel.setAlignment(QtCore.Qt.AlignCenter)
+        if(self.stackedWidget.currentIndex()==1):
+            if 0 <= index < len(self.temp_png):
+                image = QPixmap(self.temp_png[index])
+                self.previewLabel.setPixmap(image)
+                self.previewLabel.setAlignment(QtCore.Qt.AlignCenter)
+        elif(self.stackedWidget.currentIndex()==3):
+            if 0 <= index < len(self.temp_png):
+                image = QPixmap(self.temp_png[index])
+                self.previewLabel2.setPixmap(image)
+                self.previewLabel2.setAlignment(QtCore.Qt.AlignCenter)
+                self.nextButton2.setStyleSheet(styleButton(0))
+                self.prevButton2.setStyleSheet(styleButton(0))
+                if index == len(self.temp_png)-1:
+                    self.nextButton2.setStyleSheet(styleButton(1))
+                if index == 0:
+                    self.prevButton2.setStyleSheet(styleButton(2))
 
     def open_camviewer(self):
         self.stackedWidget.setCurrentIndex(2)
         self.window.close()
+        self.temp_png = []
+        self.onClicked(0)
+        if self.img_name:
+            self.temp_png.append(self.img_name)
+            print(self.temp_png)
+            self.show_page(0)
+            self.current_page_index = 0
 
     def open_docviewer(self):
         res, format = QFileDialog.getOpenFileNames(QtWidgets.QDialog(), "Open File", "C:/Users/Asus/Downloads", "JPG File (*.jpg);;PNG Files (*.png);;PDF File (*.pdf)")
         saving_folder = r"temp"
         self.temp_png = []
         if (format == "PDF File (*.pdf)"):
-            c=1
+            c=0
             for i in range(len(res)):
                 pages=convert_from_path(pdf_path=res[i], poppler_path=poppler_path)
                 for page in pages:
-                        img_name = f"temp_{c}.png"
-                        page.save(os.path.join(saving_folder, img_name), "PNG")
-                        self.temp_png.append(os.path.join(saving_folder, img_name))
-                        c+=1
+                    img_name = f"temp_{c}.png"
+                    page.save(os.path.join(saving_folder, img_name), "PNG")
+                    self.temp_png.append(os.path.join(saving_folder, img_name))
+                    c+=1
                 
         elif(format == "JPG File (*.jpg)" or format == "PNG File (*.png)"):
             for i in range(len(res)):
@@ -119,8 +232,8 @@ class Ui_MainWindow(object):
         if len(self.temp_png)>0:
             self.nextButton.setStyleSheet(styleButton(0))
         self.current_page_index = 0
-        self.show_page(0)
         self.stackedWidget.setCurrentIndex(1)
+        self.show_page(0)
         self.window.close()
 
     def open_convert(self):
@@ -785,6 +898,8 @@ class Ui_MainWindow(object):
         self.camButton.setFlat(False)
         self.camButton.setObjectName("camButton")
         self.horizontalLayout_6.addWidget(self.camButton)
+        self.camButton.clicked.connect(self.cam_captured)
+        self.cam_pressed = 0
         spacerItem5 = QtWidgets.QSpacerItem(507, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem5)
         self.verticalLayout_7.addWidget(self.frame_8)
@@ -859,6 +974,7 @@ class Ui_MainWindow(object):
         self.prevButton2.setIconSize(QtCore.QSize(50, 50))
         self.prevButton2.setObjectName("prevButton2")
         self.horizontalLayout_3.addWidget(self.prevButton2)
+        self.prevButton2.clicked.connect(self.show_previous_page)
         self.retakeButton = QtWidgets.QPushButton(self.frame_16)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -873,6 +989,7 @@ class Ui_MainWindow(object):
         self.retakeButton.setIconSize(QtCore.QSize(40, 40))
         self.retakeButton.setObjectName("retakeButton")
         self.horizontalLayout_3.addWidget(self.retakeButton)
+        self.retakeButton.clicked.connect(self.retakeButton_clicked)
         self.adjButton2 = QtWidgets.QPushButton(self.frame_16)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -933,6 +1050,7 @@ class Ui_MainWindow(object):
         self.addButton.setIconSize(QtCore.QSize(40, 40))
         self.addButton.setObjectName("addButton")
         self.horizontalLayout_3.addWidget(self.addButton)
+        self.addButton.clicked.connect(self.addButton_clicked)
         self.nextButton2 = QtWidgets.QPushButton(self.frame_16)
         self.nextButton.clicked.connect(self.show_next_page)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
@@ -946,6 +1064,7 @@ class Ui_MainWindow(object):
         self.nextButton2.setIconSize(QtCore.QSize(50, 50))
         self.nextButton2.setObjectName("nextButton2")
         self.horizontalLayout_3.addWidget(self.nextButton2)
+        self.nextButton2.clicked.connect(self.show_next_page)
         self.horizontalLayout_3.setStretch(0, 6)
         self.horizontalLayout_3.setStretch(1, 6)
         self.horizontalLayout_3.setStretch(2, 2)
@@ -987,6 +1106,14 @@ class Ui_MainWindow(object):
 
     def home_clicked(self):
         self.stackedWidget.setCurrentIndex(0)
+
+    def closeEvent(self, event):
+        if hasattr(self, 'cap'):
+            self.cap.release()
+        cv2.destroyAllWindows()
+        event.accept()
+
+
 
 if __name__ == "__main__":
     import sys
