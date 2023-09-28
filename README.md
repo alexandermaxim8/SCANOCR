@@ -11,7 +11,7 @@ SCANOCR adalah suatu aplikasi yang dapat melakukan scanning foto menjadi sebuah 
 
 
 
-# Group Contribute
+# Contributing
 Devin:
 Satwik:
 Alex:
