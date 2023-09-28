@@ -13,6 +13,124 @@ import cv2
 poppler_path=r"poppler-23.08.0\Library\bin"
 
 
+
+def styleScrollbar():
+    sStyle = """
+        QScrollArea{
+            border-radius: 20px;
+        }
+        QScrollBar:vertical{
+            border: none;
+            background-color: rgb(59, 59, 90);
+            width: 14px;
+            margin: 15px 0 15px 0;
+            border-radius: 0px;
+        }
+        QScrollBar::handle:vertical{
+            background-color: rgb(80, 80, 122);
+            min-height: 30px;
+            border-radius: 7px;
+        }
+        QScrollBar::handle:vertical:hover{
+            background-color: #58A2C2;
+        }
+        QScrollBar::handle:vertical:pressed{
+            background-color: #6391C1;
+        }
+        QScrollBar::sub-line:vertical{
+            border:none;
+            background-color: rgb(59, 59, 90);
+            height: 15px;
+            border-top-left-radius: 7px;
+            border-top-right-radius: 7px;
+            subcontrol-position: top;
+            subcontrol-origin: margin;
+        }
+        QScrollBar::sub-line:vertical:hover{
+            background-color: #58A2C2;
+        }
+        QScrollBar::sub-line:vertical:pressed{
+            background-color: #6391C1;
+        }
+        QScrollBar::add-line:vertical{
+            border:none;
+            background-color: rgb(59, 59, 90);
+            height: 15px;
+            border-bottom-left-radius: 7px;
+            border-bottom-right-radius: 7px;
+            subcontrol-position: bottom;
+            subcontrol-origin: margin;
+        }
+        QScrollBar::add-line:vertical:hover{
+            background-color: #58A2C2;
+        }
+        QScrollBar::add-line:vertical:pressed{
+            background-color: #6391C1;
+        }
+        QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical{
+            background:none;
+        }
+        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical{
+            background:none;
+        }
+
+        QScrollBar:horizontal{
+            border: none;
+            background-color: rgb(59, 59, 90);
+            height: 14px;
+            margin: 0 15px 0 15px;
+            border-radius: 0px;
+        }
+        QScrollBar::handle:horizontal{
+            background-color: rgb(80, 80, 122);
+            min-width: 30px;
+            border-radius: 7px;
+        }
+        QScrollBar::handle:horizontal:hover{
+            background-color: #58A2C2;
+        }
+        QScrollBar::handle:horizontal:pressed{
+            background-color: #6391C1;
+        }
+        QScrollBar::sub-line:horizontal{
+            border:none;
+            background-color: rgb(59, 59, 90);
+            width: 15px;
+            border-top-left-radius: 7px;
+            border-bottom-left-radius: 7px;
+            subcontrol-position: left;
+            subcontrol-origin: margin;
+        }
+        QScrollBar::sub-line:horizontal:hover{
+            background-color: #58A2C2;
+        }
+        QScrollBar::sub-line:horizontal:pressed{
+            background-color: #6391C1;
+        }
+        QScrollBar::add-line:horizontal{
+            border:none;
+            background-color: rgb(59, 59, 90);
+            width: 15px;
+            border-top-right-radius: 7px;
+            border-bottom-right-radius: 7px;
+            subcontrol-position: right;
+            subcontrol-origin: margin;
+        }
+        QScrollBar::add-line:horizontal:hover{
+            background-color: #58A2C2;
+        }
+        QScrollBar::add-line:horizontal:pressed{
+            background-color: #6391C1;
+        }
+        QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal{
+            background:none;
+        }
+        QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal{
+            background:none;
+        }
+    """
+    return sStyle
+
 def styleButton(prevnext):
     if prevnext==1:
             sStyle = """
@@ -133,6 +251,7 @@ class Ui_MainWindow(object):
                 self.current_page_index += 1
             elif self.current_page_index == len(self.temp_png) - 2:
                 self.nextButton.setStyleSheet(styleButton(1))
+                self.previousButton.setStyleSheet(styleButton(0))
                 self.current_page_index += 1
             self.show_page(self.current_page_index)
             print(self.current_page_index)
@@ -143,6 +262,7 @@ class Ui_MainWindow(object):
                 self.current_page_index += 1
             elif self.current_page_index == len(self.temp_png) - 2:
                 self.nextButton2.setStyleSheet(styleButton(1))
+                self.prevButton2.setStyleSheet(styleButton(0))
                 self.current_page_index += 1
             self.show_page(self.current_page_index)
             print(self.current_page_index)
@@ -181,6 +301,12 @@ class Ui_MainWindow(object):
                 image = QPixmap(self.temp_png[index])
                 self.previewLabel.setPixmap(image)
                 self.previewLabel.setAlignment(QtCore.Qt.AlignCenter)
+                self.nextButton.setStyleSheet(styleButton(0))
+                self.previousButton.setStyleSheet(styleButton(0))
+                if index == len(self.temp_png)-1:
+                    self.nextButton.setStyleSheet(styleButton(1))
+                if index == 0:
+                    self.previousButton.setStyleSheet(styleButton(2))
         elif(self.stackedWidget.currentIndex()==3):
             if 0 <= index < len(self.temp_png):
                 image = QPixmap(self.temp_png[index])
@@ -717,7 +843,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.scrollArea = QtWidgets.QScrollArea(self.frame_4)
-        self.scrollArea.setStyleSheet("border-radius: 20px;")
+        self.scrollArea.setStyleSheet(styleScrollbar())
         self.scrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
@@ -922,7 +1048,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.setSpacing(0)
         self.verticalLayout_14.setObjectName("verticalLayout_14")
         self.scrollArea_2 = QtWidgets.QScrollArea(self.frame_15)
-        self.scrollArea_2.setStyleSheet("")
+        self.scrollArea_2.setStyleSheet(styleScrollbar())
         self.scrollArea_2.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
@@ -1106,14 +1232,6 @@ class Ui_MainWindow(object):
 
     def home_clicked(self):
         self.stackedWidget.setCurrentIndex(0)
-
-    def closeEvent(self, event):
-        if hasattr(self, 'cap'):
-            self.cap.release()
-        cv2.destroyAllWindows()
-        event.accept()
-
-
 
 if __name__ == "__main__":
     import sys
