@@ -61,4 +61,4 @@ pip install cv2
 1. Devin: Back End Main Menu, Convert, Save As, OCR
 2. Satwik: Back End Open CV, Camera
 3. Alex: Back End Camfile, Preview Camera, Preview File, Merge Split
-4. Reza: Frond End, Read Me
+4. Reza: Front End, Read Me
