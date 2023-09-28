@@ -7,29 +7,35 @@ import camera_btn_rc, logo_btn_rc
 import img2pdf
 from pdf2docx import *
 from pdf2image import convert_from_path
-from docx2pdf import convert
+from docx2pdf import *
 from PIL import Image
+from docx import Document
 
 poppler_path = r"poppler-23.08.0\Library\bin"
 
 class Ui_Dialog(object):
     def fileButton_clicked(self):
-        self.res = False
-        self.res, self.format = QFileDialog.getOpenFileNames(QtWidgets.QDialog(), "Open File", "C:/Users/Asus/Downloads", "PDF File, (*.pdf);; JPEG File, (*.jpeg);; JPG File (*.jpg);; PNG File (*.png);; DOCX, (*docx)")
+        self.res, self.format = QFileDialog.getOpenFileNames(QtWidgets.QDialog(), "Open File", "C:/Users/Asus/Downloads", "PDF File, (*.pdf);; JPEG File, (*.jpeg);; JPG File (*.jpg);; PNG File, (*.png);; DOCX File, (*.docx)")
         if self.res:
             self.filenameLabel.setText(self.res[0])
+            self.proceedButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
             if self.format == 'PDF File, (*.pdf)':
                 reader = PdfReader(self.res[0])
-            elif self.format == 'JPEG File, (*.jpeg)' or self.format == 'JPG File (*.jpg)':
+            elif self.format == 'JPEG File, (*.jpeg)' or self.format == 'JPG File, (*.jpg)':
                 image = Image.open(self.res[0])
-            elif self.format == 'PNG File (*.png)':
+            elif self.format == 'PNG File, (*.png)':
                 image = Image.open(self.res[0])
-            elif self.format == 'DOCX, (*docx)':
-                pass
+            elif self.format == 'DOCX File, (*.docx)':
+                document = Document(self.res[0])
+
 
     def proceedButton_clicked(self):
-        self.stackedWidget.setCurrentIndex(1)
-        self.proceedButton.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor)) 
+        if self.res == False:
+            self.proceedButton.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
+            pass
+        else:
+            self.stackedWidget.setCurrentIndex(1)
+
         
     def saveButton_clicked(self):
         if self.res:
@@ -39,85 +45,71 @@ class Ui_Dialog(object):
                 if index == 1:
                     images = convert_from_path(pdf_path=self.res[0], poppler_path=poppler_path)                
                     for image in images:
-                        img_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted_", "jpeg (*.jpeg)")
-                        image.save(img_name[0], "JPEG")
+                        img_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted_", "JPEG (*.jpeg)")
+                        if img_name[0]:
+                            image.save(img_name[0], "JPEG")
+                        else:
+                            pass
+
 
                 elif index == 2:
                     images = convert_from_path(pdf_path=self.res[0], poppler_path=poppler_path)                
                     for image in images:
-                        img_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted_", "png (*.png)")
-                        image.save(img_name[0], "PNG")
+                        img_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted_", "PNG (*.png)")
+                        if img_name[0]:
+                            image.save(img_name[0], "PNG")
+                        else:
+                            pass
+
                 elif index == 3:
-                    with open(pdf, "rb") as f:
-                        reader = PdfReader(f)
-                        writer = PdfWriter()
-                    pdf = reader
+                    pdf = self.res[0]
+                    docx = Converter(pdf)
+                    docx_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "DOCX (*.docx)")
+                    if docx_name[0]:
+                        docx.convert(docx_name[0])
+                    else:
+                        pass
+                    docx.close()
+
+            elif self.format == 'JPEG File, (*.jpeg)':
+                if index == 0:
+                    image = Image.open(self.res[0])
+                    pdf = image.convert('RGB')
+                    pdf_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "PDF (*.pdf)")
+                    if pdf_name:
+                        if pdf_name[0]:
+                            pdf.save(pdf_name[0], "PDF")
+                        else:
+                            pass
+
+            elif self.format == 'PNG File, (*.png)':
+                if index == 0:
+                    image = Image.open(self.res[0])
+                    pdf = image.convert('RGB')
+                    pdf_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "PDF (*.pdf)")
+                    if pdf_name:
+                        if pdf_name[0]:
+                            pdf.save(pdf_name[0], "PDF")
+                        else:
+                            pass
+
+            elif self.format == 'DOCX File, (*.docx)':
+                if index == 0:
                     docx = self.res[0]
-                    conv = Converter(pdf)
-                    conv.convert(docx)
-                    output_filename, _ = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "docx (*.docx)")
-
-            elif self.format == 'JPEG File (*.jpeg)':
-                if index == 0:
-                    image = Image.open(self.res[0])
-                    pdf = img2pdf.convert()
-                    with open(pdf, "rb") as f:
-                        reader = PdfReader(f)
-                        writer = PdfWriter()
-                    output_filename, _ = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "PDF (*.pdf)")
-                    if output_filename:
-                        with open(output_filename, 'wb') as output_file:
-                            writer.write(output_file)
-                elif index == 1:
-                    pass
-                elif index == 2:
-                    pass
-                elif index == 3:
-                    
-                    output_filename, _ = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "docx (*.docx)")
-            elif self.format == 'PNG File (*.png)':
-                if index == 0:
-                    image = Image.open(self.res[0])
-                    pdf = img2pdf.convert()
-                    with open(pdf, "rb") as f:
-                        reader = PdfReader(f)
-                        writer = PdfWriter()
-                    output_filename, _ = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "PDF (*.pdf)")
-                    if output_filename:
-                        with open(output_filename, 'wb') as output_file:
-                            writer.write(output_file)                  
-                elif index == 1:
-                    pass
-                elif index == 2:
-                    pass
-                elif index == 3:
-                    
-                    output_filename, _ = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "docx (*.docx)")
-            elif self.format == 'DOCX File (*.docx)':
-                if index == 0:
-                    with open(self.res[0], "rb") as f:
-                        reader = PdfReader(f)
-                        writer = PdfWriter()
-                    output_filename, _ = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "PDF (*.pdf)")
-                    if output_filename:
-                        with open(output_filename, 'wb') as output_file:
-                            writer.write(output_file)
-                elif index == 1:
-                    pass
-                elif index == 2:
-                    pass
-                elif index == 3:
-                    pass
-
+                    pdf_name = QFileDialog.getSaveFileName(QtWidgets.QDialog(), "Save converted file", self.res[0]+"_converted", "PDF (*.pdf)")
+                    if pdf_name:
+                        if pdf_name[0]:
+                            pdf = convert(docx, pdf_name[0])
+                        else:
+                            pass
         else:
             pass
 
     def cancelButton_clicked(self):
-        self.res = False
         self.stackedWidget.setCurrentIndex(0)
-        self.cancelButton.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor)) 
 
     def setupUi(self, Dialog):
+        self.res = False
         Dialog.setObjectName("Dialog")
         Dialog.resize(330, 320)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -372,6 +364,9 @@ class Ui_Dialog(object):
         self.retranslateUi(Dialog)
         self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+        self.proceedButton.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
+
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
