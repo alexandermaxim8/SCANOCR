@@ -57,7 +57,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install cv2.
 pip install cv2
 ```
 # Contributing
-Devin:
-Satwik:
-Alex:
-Reza: 
+Devin: Back End Main Menu, Convert, Save As, OCR
+Satwik: Back End Open CV, Camera
+Alex: Back End Camfile, Preview Camera, Preview File, Merge Split
+Reza: Frond End, Read Me
