@@ -8,8 +8,6 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install PyQt5.
 ```bash
 pip install PyQt5
 ```
-# API
-
 
 
 # Contributing
