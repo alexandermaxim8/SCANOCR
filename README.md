@@ -4,7 +4,7 @@ SCANOCR adalah suatu aplikasi yang dapat melakukan scanning foto menjadi sebuah 
 
 
 # Module
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install requirements.txt.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install all libraries required.
 ```bash
 pip install -requrements.txt
 ```
