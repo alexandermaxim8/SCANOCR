@@ -1,0 +1,9 @@
+PyQt5
+PyPDF2
+numpy
+img2pdf
+pdf2docx
+pdf2image
+docx2pdf
+pytesseract
+opencv-python
