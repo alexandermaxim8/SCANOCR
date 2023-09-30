@@ -15,3 +15,6 @@ pip install -requrements.txt
 2. Satwik  : Back End Open CV, Camera
 3. Alex    : Back End Camfile, Preview Camera, Preview File, Merge Split
 4. Reza    : Front End, Read Me
+
+# Bug
+
