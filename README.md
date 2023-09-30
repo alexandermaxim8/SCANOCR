@@ -11,7 +11,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install all lib
 ```bash
 pip install -requrements.txt
 ```
-
+Note: You need to install tesseract.exe
 # Contributing
 
 1. Devin   : Back End Main Menu, Convert, Save As, OCR
