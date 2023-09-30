@@ -21,4 +21,8 @@ Note: You need to install tesseract.exe
 3. Alex    : Back End Camfile, Preview Camera, Preview File, Preview Merge/Split
 4. Reza    : Front End, Read Me
    
-#
+# Link Github
+
+https://github.com/alexandermaxim8/SCANOCR
+
+
