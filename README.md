@@ -19,5 +19,3 @@ pip install -requrements.txt
 3. Alex    : Back End Camfile, Preview Camera, Preview File, Merge Split
 4. Reza    : Front End, Read Me
 
-# Bug
-
