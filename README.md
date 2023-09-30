@@ -2,6 +2,9 @@
 
 SCANOCR adalah suatu aplikasi yang dapat melakukan scanning foto menjadi sebuah dokumen, dan melakukan konversi ke berbagai format digital seperti pdf, jpeg, docx, dll. Aplikasi ini menggunakan tambahan webcam untuk mengambil gambar foto yang ingin di scan.
 
+# Fitur
+
+Pada saat membuka aplikasi ini akan ditampilkan main menu, di bagian main menu terdapat pilihan OCR, Document Scanning, Convert Format, dan Merge/Split (PDF).
 
 # Module
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install all libraries required.
