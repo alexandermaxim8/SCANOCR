@@ -1,6 +1,6 @@
 # SCANOCR
 
-SCANOCR adalah suatu aplikasi yang dapat melakukan scanning foto menjadi sebuah dokumen, dan melakukan konversi ke berbagai format digital seperti pdf, jpeg, docx, dll
+SCANOCR adalah suatu aplikasi yang dapat melakukan scanning foto menjadi sebuah dokumen, dan melakukan konversi ke berbagai format digital seperti pdf, jpeg, docx, dll. Aplikasi ini menggunakan tambahan webcam untuk mengambil gambar foto yang ingin di scan
 
 
 # Module
