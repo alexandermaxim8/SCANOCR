@@ -9,8 +9,11 @@ import numpy as np
 from pdf2image import convert_from_path
 from PIL import Image
 import cv2
+import pytesseract
+from functools import partial
 
 poppler_path=r"poppler-23.08.0\Library\bin"
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 
 
@@ -177,11 +180,17 @@ def styleButton(prevnext):
             
     return sStyle
 
-
 class Ui_MainWindow(object):
     def cam_captured(self):
         self.cam_pressed = 1
 
+    def saveas(self):
+        self.window = saveas.QtWidgets.QDialog()
+        self.ui = saveas.Ui_Dialog()
+        self.ui.setupUi(self.window)
+        self.ui.saveButton.clicked.connect(lambda: self.ui.processing(self.temp_png, self.isOCR))
+        self.window.show()
+               
     @pyqtSlot()
     def onClicked(self, index):
         self.cap = cv2.VideoCapture(0)
@@ -197,7 +206,7 @@ class Ui_MainWindow(object):
 
     def displayImage(self, image, index, window=1):
         print(index)
-        image = cv2.resize(image, (720, 480))
+        image = cv2.resize(image, (1280, 960))
         qformat = QImage.Format_Indexed8
         if len(image.shape) == 3:
             if image.shape[2] == 4:
@@ -211,9 +220,10 @@ class Ui_MainWindow(object):
         self.cameraLabel.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
         self.img_name = False
         if self.cam_pressed == 1:
-            pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-            flipped_pil_image=pil_image.transpose(Image.FLIP_LEFT_RIGHT)
-            image = cv2.cvtColor(np.array(flipped_pil_image), cv2.COLOR_RGB2BGR)
+            if self.isOCR == False:
+                pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+                flipped_pil_image=pil_image.transpose(Image.FLIP_LEFT_RIGHT)
+                image = cv2.cvtColor(np.array(flipped_pil_image), cv2.COLOR_RGB2BGR)
             self.img_name = f"temp/temp_{index}.png"
             cv2.imwrite(self.img_name, image)
             self.cam_pressed = 0
@@ -253,6 +263,8 @@ class Ui_MainWindow(object):
                 self.nextButton.setStyleSheet(styleButton(1))
                 self.previousButton.setStyleSheet(styleButton(0))
                 self.current_page_index += 1
+            elif self.current_page_index == len(self.temp_png) - 1:
+                self.saveas()
             self.show_page(self.current_page_index)
             print(self.current_page_index)
         elif(self.stackedWidget.currentIndex()==3):
@@ -264,6 +276,8 @@ class Ui_MainWindow(object):
                 self.nextButton2.setStyleSheet(styleButton(1))
                 self.prevButton2.setStyleSheet(styleButton(0))
                 self.current_page_index += 1
+            elif self.current_page_index == len(self.temp_png) - 1:
+                self.saveas()
             self.show_page(self.current_page_index)
             print(self.current_page_index)
 
@@ -375,6 +389,7 @@ class Ui_MainWindow(object):
         self.window.show()
 
     def open_OCR(self):
+        self.isOCR = True
         self.window = camfile.QtWidgets.QDialog()
         self.ui = camfile.Ui_Dialog()
         self.ui.setupUi(self.window)
@@ -383,6 +398,7 @@ class Ui_MainWindow(object):
         self.window.show()
 
     def open_docscan(self):
+        self.isOCR = False
         self.window = camfile.QtWidgets.QDialog()
         self.ui = camfile.Ui_Dialog()
         self.ui.setupUi(self.window)
